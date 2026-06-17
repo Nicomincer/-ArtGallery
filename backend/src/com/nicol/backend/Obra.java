@@ -30,7 +30,7 @@ public abstract class Obra {
     }
 
     public void adicionarAvaliacao(Avaliacao avaliacao){
-        avaliacoes.add(avaliacao);
+            avaliacoes.add(avaliacao);
     }
 
     public double mediaAvaliacoes(){
