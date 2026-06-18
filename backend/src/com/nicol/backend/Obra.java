@@ -8,9 +8,12 @@ public abstract class Obra {
     private String titulo;
     private String autor;
 
-    public void Obra(String titulo, String autor){
+    public Obra(String titulo, String autor){
         this.titulo = titulo;
         this.autor = autor;
+        this.ativa = true;
+        this.avaliacoes = new Vector<>();
+
     }
 
     public String getTitulo(){
@@ -41,8 +44,12 @@ public abstract class Obra {
             soma += avaliacao.mostrarNota();
             qtd_avaliacoes++;
         }
-        media = (double) soma/qtd_avaliacoes;
-        return media;
+        if(qtd_avaliacoes != 0) {
+            media = (double) soma / qtd_avaliacoes;
+            return media;
+        }else{
+            return 0.0;
+        }
     }
     public abstract String exibirDetalhes();
 

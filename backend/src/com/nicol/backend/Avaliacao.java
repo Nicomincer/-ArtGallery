@@ -1,7 +1,7 @@
 package com.nicol.backend;
 import com.nicol.exceptions.NotaInvalidaException;
 
-public class Avaliacao {
+public class Avaliacao{
     private String usuario;
     private int nota;
     private String comentario;
@@ -14,5 +14,9 @@ public class Avaliacao {
         else{
             throw new NotaInvalidaException();
         }
+    }
+
+    public int mostrarNota(){
+        return this.nota;
     }
 }
