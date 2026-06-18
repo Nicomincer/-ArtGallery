@@ -1,7 +1,8 @@
 package com.nicol.backend;
+import java.io.Serializable;
 
 
-public class Modelagem3D extends Obra{
+public class Modelagem3D extends Obra implements Serializable{
     private int numeroPoligonos;
     private String engine;
     public Modelagem3D(String titulo, String autor, int numeroPoligonos, String engine){

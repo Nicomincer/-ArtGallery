@@ -1,6 +1,7 @@
 package com.nicol.backend;
+import java.io.Serializable;
 
-public class ArteGenerativa extends Obra{
+public class ArteGenerativa extends Obra implements Serializable{
     private String algoritmo;
     private long seed;
     public ArteGenerativa(String titulo, String autor, String algoritmo, long seed){

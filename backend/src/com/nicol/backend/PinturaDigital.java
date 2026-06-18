@@ -1,6 +1,7 @@
 package com.nicol.backend;
+import java.io.Serializable;
 
-public class PinturaDigital extends Obra{
+public class PinturaDigital extends Obra implements Serializable{
     private String resolucao;
     private String softwareUtilizado;
 

@@ -1,8 +1,9 @@
 package com.nicol.backend;
 import com.nicol.backend.Avaliacao;
+import java.io.Serializable;
 import java.util.Vector;
 
-public abstract class Obra {
+public abstract class Obra implements Serializable{
     private Vector<Avaliacao> avaliacoes;
     private boolean ativa;
     private String titulo;
