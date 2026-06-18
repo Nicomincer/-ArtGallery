@@ -10,7 +10,6 @@ public class Main {
         ArtGallery galeria = new ArtGallery(repositorio);
 
         SwingUtilities.invokeLater(() -> {
-            // Declarando o tipo como a Interface:
             IArtGalleryView tela = new ArtGalleryGUI(galeria);
             tela.exibirTela();
         });

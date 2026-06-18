@@ -33,7 +33,6 @@ public class ArtGalleryGUI extends JFrame implements IArtGalleryView {
         add(abas);
     }
 
-    // --- IMPLEMENTAÇÃO DOS MÉTODOS DA INTERFACE ---
 
     @Override
     public void exibirTela() {
@@ -115,11 +114,11 @@ public class ArtGalleryGUI extends JFrame implements IArtGalleryView {
                 }
 
                 galleria.publicarObra(nova_obra);
-                exibirMensagem("Obra cadastrada com sucesso!"); // Uso do método da interface
+                exibirMensagem("Obra cadastrada com sucesso!");
 
                 txt_titulo.setText(""); txt_autor.setText(""); txt_info1.setText(""); txt_info2.setText("");
             } catch (ObraJaCadastradaException ex) {
-                exibirErro(ex.getMessage()); // Uso do método da interface
+                exibirErro(ex.getMessage());
             } catch (Exception ex) {
                 exibirErro("Erro nos dados informados. Verifique os campos.");
             }
@@ -175,17 +174,17 @@ public class ArtGalleryGUI extends JFrame implements IArtGalleryView {
 
                 Avaliacao avaliacao = new Avaliacao(usuario, nota, comentario);
 
-                // Se a obra não existir, o método vai "jogar" o erro para cá
+
                 galleria.avaliarObra(titulo, avaliacao);
 
-                // Só vai chegar aqui se a obra existir e estiver ativa!
+
                 exibirMensagem("Avaliação adicionada com sucesso!");
 
-                // Limpa os campos
+
                 txt_obra_titulo.setText(""); txt_usuario.setText(""); txt_nota.setText(""); txt_comentario.setText("");
 
             } catch (IllegalArgumentException | IllegalStateException ex) {
-                // Captura o erro do backend e mostra o aviso exato na tela!
+
                 exibirErro(ex.getLocalizedMessage());
             } catch (Exception ex) {
                 exibirErro("Erro ao processar avaliação. Verifique se a nota é válida.");

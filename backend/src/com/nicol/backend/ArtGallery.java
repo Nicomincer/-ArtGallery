@@ -22,6 +22,7 @@ public class ArtGallery implements IArtGallery{
         Obra obra = repositorio.buscar(titulo);
         if(obra != null && obra.isAtiva()){
             obra.setAtiva(false);
+            repositorio.remover(titulo);
 
         }
     }
@@ -59,7 +60,7 @@ public class ArtGallery implements IArtGallery{
     public Vector<Obra> buscarPorAutor(String autor){
         Vector<Obra> obra_do_autor_x = new Vector<>();
         for(Obra obra: repositorio.listar()){
-            if(obra.getAutor().equals(autor)){
+            if(obra.getAutor().equals(autor) && obra.isAtiva()){
                 obra_do_autor_x.add(obra);
             }
         }
