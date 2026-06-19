@@ -23,4 +23,15 @@ public class Exposicao implements Serializable{
     public Vector<Obra> listarObras(){
         return this.obras;
     }
+
+    public void removerObra(String titulo) {
+        for (int i = 0; i < obras.size(); i++) {
+            if (obras.get(i).getTitulo().equalsIgnoreCase(titulo)) {
+                obras.remove(i);
+                return;
+            }
+        }
+        
+        throw new IllegalArgumentException("A obra '" + titulo + "' não está nesta exposição.");
+    }
 }

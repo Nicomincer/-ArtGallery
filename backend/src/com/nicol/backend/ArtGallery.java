@@ -89,8 +89,75 @@ public class ArtGallery implements IArtGallery{
         return new Vector<>();
 
     }
+    public Obra buscarPorTitulo(String titulo) {
+        Obra obra = repositorio.buscar(titulo);
+
+
+        if (obra != null && obra.isAtiva()) {
+            return obra;
+        }
+
+
+        return null;
+    }
 
     public void adicionarExposicao(Exposicao exposicao) {
         this.exposicoes.add(exposicao);
+    }
+
+    public void adicionarObraNaExposicao(String nomeExposicao, String tituloObra) {
+        // 1. Busca a obra usando o método que já criamos e filtra as inativas
+        Obra obra_encontrada = this.buscarPorTitulo(tituloObra);
+
+        if (obra_encontrada == null) {
+            throw new IllegalArgumentException("Não foi possível adicionar: A obra não existe ou está desativada.");
+        }
+
+        // 2. Busca a exposição pelo nome
+        for (Exposicao exposicao : this.exposicoes) {
+            if (exposicao.getNome().equalsIgnoreCase(nomeExposicao)) {
+                // 3. Adiciona a obra na exposição
+                exposicao.adicionarObra(obra_encontrada);
+                return;
+            }
+        }
+
+        // 4. Se o loop terminar sem achar a exposição:
+        throw new IllegalArgumentException("A exposição '" + nomeExposicao + "' não foi encontrada.");
+    }
+
+    public void removerObraDaExposicao(String nomeExposicao, String tituloObra) {
+        // Busca a exposição pelo nome
+        for (Exposicao exposicao : this.exposicoes) {
+            if (exposicao.getNome().equalsIgnoreCase(nomeExposicao)) {
+                // Se achar a exposição, manda ela remover a obra
+                exposicao.removerObra(tituloObra);
+                return;
+            }
+        }
+
+        // Se não achar a exposição:
+        throw new IllegalArgumentException("A exposição '" + nomeExposicao + "' não foi encontrada.");
+    }
+
+    public void ativarObra(String titulo) {
+
+        Obra obra = this.repositorio.buscar(titulo);
+
+
+        if (obra == null) {
+            throw new IllegalArgumentException("A obra '" + titulo + "' não existe no sistema!");
+        }
+
+
+        if (obra.isAtiva()) {
+            throw new IllegalStateException("A obra '" + titulo + "' já está ativa no sistema!");
+        }
+
+
+        obra.setAtiva(true);
+
+
+        repositorio.atualizar(obra);
     }
 }

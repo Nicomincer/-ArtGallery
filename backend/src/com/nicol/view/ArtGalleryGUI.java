@@ -29,7 +29,7 @@ public class ArtGalleryGUI extends JFrame implements IArtGalleryView {
         abas.addTab("Obras (Cadastrar/Remover)", criarAbaObras());
         abas.addTab("Avaliações", criarAbaAvaliacoes());
         abas.addTab("Consultas e Listagens", criarAbaConsultas());
-
+        abas.addTab("Exposições", criarAbaExposicoes());
         add(abas);
     }
 
@@ -128,10 +128,26 @@ public class ArtGalleryGUI extends JFrame implements IArtGalleryView {
         form_remover.setBorder(BorderFactory.createTitledBorder("Desativar/Remover Obra"));
         JTextField txt_remover_titulo = new JTextField(20);
         JButton btn_remover = new JButton("Remover");
+        JButton btn_reativar = new JButton("Reativar");
 
         form_remover.add(new JLabel("Título da Obra:"));
         form_remover.add(txt_remover_titulo);
         form_remover.add(btn_remover);
+        form_remover.add(btn_reativar);
+
+        btn_reativar.addActionListener(e -> {
+            try {
+                String titulo = txt_remover_titulo.getText();
+                galleria.ativarObra(titulo); // Chama o novo método do backend
+
+                exibirMensagem("A obra '" + titulo + "' foi reativada com sucesso!");
+                txt_remover_titulo.setText("");
+            } catch (IllegalArgumentException | IllegalStateException ex) {
+                exibirErro(ex.getMessage());
+            } catch (Exception ex) {
+                exibirErro("Erro ao tentar reativar a obra.");
+            }
+        });
 
         btn_remover.addActionListener(e -> {
             galleria.removerObra(txt_remover_titulo.getText());
@@ -220,6 +236,123 @@ public class ArtGalleryGUI extends JFrame implements IArtGalleryView {
         btn_listar_ativas.addActionListener(e -> atualizarLista(galleria.listarObras()));
         btn_top_obras.addActionListener(e -> atualizarLista(galleria.topObras()));
         btn_buscar_autor.addActionListener(e -> atualizarLista(galleria.buscarPorAutor(txt_busca_autor.getText())));
+
+        return painel;
+    }
+
+    private JPanel criarAbaExposicoes() {
+        JPanel painel = new JPanel(new BorderLayout(10, 10));
+        painel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // --- PAINEL NORTE: CRIAR E VINCULAR ---
+        JPanel painel_gerenciamento = new JPanel(new GridLayout(2, 1, 5, 5));
+
+        // Linha 1: Criar Nova Exposição
+        JPanel linha_criar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        linha_criar.setBorder(BorderFactory.createTitledBorder("1. Criar Exposição"));
+        JTextField txt_nome_nova_exposicao = new JTextField(15);
+        JButton btn_criar_exposicao = new JButton("Criar Exposição");
+
+        linha_criar.add(new JLabel("Nome da Exposição:"));
+        linha_criar.add(txt_nome_nova_exposicao);
+        linha_criar.add(btn_criar_exposicao);
+
+        // Linha 2: Adicionar Obra na Exposição
+        JPanel linha_vincular = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        linha_vincular.setBorder(BorderFactory.createTitledBorder("2. Adicionar Obra a uma Exposição Existente"));
+        JTextField txt_nome_exposicao_destino = new JTextField(12);
+        JTextField txt_titulo_obra_vincular = new JTextField(12);
+        JButton btn_vincular_obra = new JButton("Vincular Obra");
+        JButton btn_remover_da_exposicao = new JButton("Remover Obra");
+
+        linha_vincular.add(new JLabel("Exposição:"));
+        linha_vincular.add(txt_nome_exposicao_destino);
+        linha_vincular.add(new JLabel("Título da Obra:"));
+        linha_vincular.add(txt_titulo_obra_vincular);
+        linha_vincular.add(btn_vincular_obra);
+        linha_vincular.add(btn_remover_da_exposicao);
+
+        painel_gerenciamento.add(linha_criar);
+        painel_gerenciamento.add(linha_vincular);
+
+        // --- PAINEL CENTRAL: PESQUISAR E LISTAR OBRAS DA EXPOSIÇÃO ---
+        JPanel painel_busca = new JPanel(new BorderLayout(5, 5));
+        painel_busca.setBorder(BorderFactory.createTitledBorder("3. Listar Obras de uma Exposição"));
+
+        JPanel barra_busca = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JTextField txt_buscar_exposicao = new JTextField(20);
+        JButton btn_buscar_exposicao = new JButton("Ver Obras");
+
+        barra_busca.add(new JLabel("Nome da Exposição:"));
+        barra_busca.add(txt_buscar_exposicao);
+        barra_busca.add(btn_buscar_exposicao);
+
+        // Área de texto exclusiva desta aba para exibir os resultados da exposição
+        JTextArea txt_resultados_exposicao = new JTextArea();
+        txt_resultados_exposicao.setEditable(false);
+        JScrollPane scroll_exposicao = new JScrollPane(txt_resultados_exposicao);
+
+        painel_busca.add(barra_busca, BorderLayout.NORTH);
+        painel_busca.add(scroll_exposicao, BorderLayout.CENTER);
+
+        // --- AÇÕES DOS BOTÕES ---
+
+        btn_criar_exposicao.addActionListener(e -> {
+            String nome = txt_nome_nova_exposicao.getText();
+            if(!nome.isBlank()) {
+                galleria.adicionarExposicao(new Exposicao(nome));
+                exibirMensagem("Exposição '" + nome + "' criada!");
+                txt_nome_nova_exposicao.setText("");
+            }
+        });
+
+        btn_vincular_obra.addActionListener(e -> {
+            try {
+                String nome_exp = txt_nome_exposicao_destino.getText();
+                String titulo_obra = txt_titulo_obra_vincular.getText();
+                galleria.adicionarObraNaExposicao(nome_exp, titulo_obra);
+                exibirMensagem("Obra adicionada à exposição com sucesso!");
+                txt_nome_exposicao_destino.setText("");
+                txt_titulo_obra_vincular.setText("");
+            } catch (Exception ex) {
+                exibirErro(ex.getMessage());
+            }
+        });
+
+        
+        btn_remover_da_exposicao.addActionListener(e -> {
+            try {
+                String nome_exp = txt_nome_exposicao_destino.getText();
+                String titulo_obra = txt_titulo_obra_vincular.getText();
+
+                galleria.removerObraDaExposicao(nome_exp, titulo_obra);
+                exibirMensagem("A obra foi removida da exposição com sucesso!");
+
+                txt_nome_exposicao_destino.setText("");
+                txt_titulo_obra_vincular.setText("");
+            } catch (Exception ex) {
+                exibirErro(ex.getMessage());
+            }
+        });
+
+        btn_buscar_exposicao.addActionListener(e -> {
+            txt_resultados_exposicao.setText("");
+            String nome = txt_buscar_exposicao.getText();
+            Vector<Obra> obras_da_exposicao = galleria.obrasExpostas(nome);
+
+            if (obras_da_exposicao.isEmpty()) {
+                txt_resultados_exposicao.setText("Nenhuma obra encontrada nesta exposição (ou a exposição não existe).");
+            } else {
+                for (Obra obra : obras_da_exposicao) {
+                    // Late binding na listagem da exposição
+                    txt_resultados_exposicao.append(obra.exibirDetalhes() + "\n");
+                    txt_resultados_exposicao.append("----------------------------------------\n");
+                }
+            }
+        });
+
+        painel.add(painel_gerenciamento, BorderLayout.NORTH);
+        painel.add(painel_busca, BorderLayout.CENTER);
 
         return painel;
     }
